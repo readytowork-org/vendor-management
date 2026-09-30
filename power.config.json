@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "appId": "50207fbc-05b1-4d34-9590-2a2029e77add",
-  "appDisplayName": "System-dashboard",
+  "appId": "1be697c8-2533-44aa-a247-bdf4ec491b89",
+  "appDisplayName": "Vendor Code Dashboard",
   "region": "prod",
   "environmentId": "795c3802-1459-e0fe-ba1a-c87ff9d260ba",
   "description": " ",
@@ -14,40 +14,40 @@
       "id": "/providers/Microsoft.PowerApps/apis/shared_commondataservice",
       "displayName": "Microsoft Dataverse",
       "dataSources": [
-        "units",
-        "materialcategories",
-        "vendors",
-        "materials",
-        "materialvendors",
-        "materialpricesperunit",
-        "projects",
-        "projectmaterials"
+        "cdb_units",
+        "cdb_materialcategories",
+        "cdb_vendors",
+        "cdb_materials",
+        "cdb_materialvendors",
+        "cdb_materialpriceperunits",
+        "cdb_projects",
+        "cdb_projectmaterials"
       ],
       "dataSets": {
         "default.cds": {
           "dataSources": {
-            "units": {
+            "cdb_units": {
               "tableName": "cdb_units"
             },
-            "materialcategories": {
+            "cdb_materialcategories": {
               "tableName": "cdb_materialcategories"
             },
-            "vendors": {
+            "cdb_vendors": {
               "tableName": "cdb_vendors"
             },
-            "materials": {
+            "cdb_materials": {
               "tableName": "cdb_materials"
             },
-            "materialvendors": {
+            "cdb_materialvendors": {
               "tableName": "cdb_materialvendors"
             },
-            "materialpricesperunit": {
+            "cdb_materialpriceperunits": {
               "tableName": "cdb_materialpriceperunits"
             },
-            "projects": {
+            "cdb_projects": {
               "tableName": "cdb_projects"
             },
-            "projectmaterials": {
+            "cdb_projectmaterials": {
               "tableName": "cdb_projectmaterials"
             }
           }

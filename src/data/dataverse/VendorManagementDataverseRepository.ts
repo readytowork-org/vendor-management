@@ -96,7 +96,10 @@ export class VendorManagementDataverseRepository implements CostDbRepository {
   private snapshotPromise: Promise<Snapshot> | null = null;
 
   private loadSnapshot(): Promise<Snapshot> {
-    this.snapshotPromise ??= this.fetchSnapshot();
+    this.snapshotPromise ??= this.fetchSnapshot().catch((error: unknown) => {
+      this.snapshotPromise = null;
+      throw error;
+    });
     return this.snapshotPromise;
   }
 
