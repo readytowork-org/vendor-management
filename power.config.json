@@ -1,0 +1,58 @@
+{
+  "version": "1.0",
+  "appId": "50207fbc-05b1-4d34-9590-2a2029e77add",
+  "appDisplayName": "System-dashboard",
+  "region": "prod",
+  "environmentId": "795c3802-1459-e0fe-ba1a-c87ff9d260ba",
+  "description": " ",
+  "buildPath": "./dist",
+  "buildEntryPoint": "index.html",
+  "localAppUrl": "http://localhost:5173",
+  "logoPath": "Default",
+  "connectionReferences": {
+    "466752fb-3a70-488f-8266-acbf3df041c3": {
+      "id": "/providers/Microsoft.PowerApps/apis/shared_commondataservice",
+      "displayName": "Microsoft Dataverse",
+      "dataSources": [
+        "units",
+        "materialcategories",
+        "vendors",
+        "materials",
+        "materialvendors",
+        "materialpricesperunit",
+        "projects",
+        "projectmaterials"
+      ],
+      "dataSets": {
+        "default.cds": {
+          "dataSources": {
+            "units": {
+              "tableName": "cdb_units"
+            },
+            "materialcategories": {
+              "tableName": "cdb_materialcategories"
+            },
+            "vendors": {
+              "tableName": "cdb_vendors"
+            },
+            "materials": {
+              "tableName": "cdb_materials"
+            },
+            "materialvendors": {
+              "tableName": "cdb_materialvendors"
+            },
+            "materialpricesperunit": {
+              "tableName": "cdb_materialpriceperunits"
+            },
+            "projects": {
+              "tableName": "cdb_projects"
+            },
+            "projectmaterials": {
+              "tableName": "cdb_projectmaterials"
+            }
+          }
+        }
+      }
+    }
+  }
+}

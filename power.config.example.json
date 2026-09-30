@@ -1,0 +1,31 @@
+{
+  "_comment": [
+    "EXAMPLE ONLY. The real power.config.json is created by `pa app init`.",
+    "Do not hand-write it; appId is issued on the first successful push.",
+    "  pa auth login",
+    "  pa app init --display-name \"COSTDB 分析・ダッシュボード\" --environment-id <environment-id>",
+    "",
+    "environmentId : Power Platform environment GUID.",
+    "                make.powerapps.com > gear icon > Session details",
+    "appId         : written by the CLI after `pa app push` succeeds",
+    "connectionReferences / databaseReferences : appended by `pa app add data-source`"
+  ],
+  "appId": "00000000-0000-0000-0000-000000000000",
+  "appDisplayName": "COSTDB 分析・ダッシュボード",
+  "description": "Analytics dashboard for construction unit prices",
+  "environmentId": "00000000-0000-0000-0000-000000000000",
+  "buildPath": "dist",
+  "buildEntryPoint": "index.html",
+  "logoPath": "public/logomark.svg",
+  "connectionReferences": {},
+  "databaseReferences": {
+    "default.cds": {
+      "dataSources": {
+        "cr123_costdbitem": {
+          "entitySetName": "cr123_costdbitems",
+          "tableName": "cr123_costdbitem"
+        }
+      }
+    }
+  }
+}
