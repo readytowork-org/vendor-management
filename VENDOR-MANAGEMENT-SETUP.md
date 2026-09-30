@@ -3,7 +3,7 @@
 > **Purpose:** Single source of truth for setting up the **Vendor Management** system in Power Platform (Dataverse + Power Apps), aligned with the COSTDB-style dashboard.  
 > **Publisher prefix:** `cdb`  
 > **Solution:** Vendor Management (`VendorManagement`)  
-> **Environment org (example):** `https://orgfd37376e.crm7.dynamics.com`
+> **Environment org (example):** `https://orgid.crm7.dynamics.com`
 
 Use this document as the agent/playbook: fix schema first, then seed, then build UI (Canvas / Model-driven / Code app).
 
@@ -252,6 +252,58 @@ Known working examples in this environment:
 | `cdb_project` | `cdb_projects` |
 | `cdb_projectmaterial` | `cdb_projectmaterials` |
 
+### 5.1 Code App Dataverse connection commands
+
+The dashboard uses the Power Apps Code App Dataverse connector. The following sequence was used to verify the environment and register the eight tables above. Use Node.js 22 or later for PAC datasource commands.
+
+```bash
+cd /path/to/vendor-management-dashboard
+nvm use 22
+
+# Confirm the active Power Platform profile and environment.
+pac auth list
+pac org who
+
+# Find the Dataverse connector connection ID.
+export ORG_URL="https://orgid.crm7.dynamics.com/"
+pac connection list --environment "$ORG_URL"
+export CONNECTION_ID="<Dataverse connection ID from the output above>"
+
+# Confirm the dataset and table entity sets are available.
+pac code list-datasets \
+  --apiId shared_commondataservice \
+  --connectionId "$CONNECTION_ID"
+pac code list-tables \
+  --apiId shared_commondataservice \
+  --connectionId "$CONNECTION_ID" \
+  --dataset default.cds
+
+# Register all Vendor Management tables with the Code App.
+for table in \
+  cdb_units \
+  cdb_materialcategories \
+  cdb_vendors \
+  cdb_materials \
+  cdb_materialvendors \
+  cdb_materialpriceperunits \
+  cdb_projects \
+  cdb_projectmaterials
+do
+  pac code add-data-source \
+    --apiId shared_commondataservice \
+    --connectionId "$CONNECTION_ID" \
+    --dataset default.cds \
+    --table "$table" \
+    --environment "$ORG_URL"
+done
+
+# Validate the app after datasource registration.
+npm install
+npm run build
+```
+
+`pac code add-data-source` updates `power.config.json`, `.power/schemas/appschemas/dataSourcesInfo.ts`, and generates a model/service under `src/generated/`. Keep those generated files in sync with the registered tables. For local Code App execution with Dataverse selected, use `npm run play`; plain `npm run dev` uses mock data unless `VITE_COSTDB_SOURCE=dataverse` is set.
+
 ---
 
 ## 6. Seed data
@@ -267,7 +319,7 @@ Known working examples in this environment:
 Auth: same Node helper `costdb-dashboard/scripts/dataverseClient.mjs` (or `AUTH_HELPER`).
 
 ```bash
-export ORG_URL="https://orgfd37376e.crm7.dynamics.com"
+export ORG_URL="https://orgid.crm7.dynamics.com"
 export AUTH_HELPER="/path/to/dataverseClient.mjs"
 ./seed-costdb-data.sh
 ```
