@@ -28,7 +28,8 @@ export function yearWeight(item: CostItem | null): number {
 
 /**
  * Real supplier split, aggregated from the purchase order history table.
- * Share is the supplier's number of orders; price is their mean order price.
+ * Share is the supplier's total order amount as a percentage of all orders.
+ * Price is their mean order price.
  * Returns [] when the item has no order rows, so the caller can fall back.
  */
 export function supplierRowsFromOrders(entry: OrderHistoryEntry | null): SupplierRow[] {
@@ -42,10 +43,10 @@ export function supplierRowsFromOrders(entry: OrderHistoryEntry | null): Supplie
     bySupplier.set(order.supplier, current);
   }
 
-  const orderCount = entry.orders.length;
+  const totalAmount = entry.orders.reduce((sum, o) => sum + o.price, 0);
   const rows: SupplierRow[] = [...bySupplier].map(([name, agg]) => ({
     name,
-    share: round1((agg.count / orderCount) * 100),
+    share: round1((agg.total / totalAmount) * 100),
     price: round1(agg.total / agg.count),
   }));
 

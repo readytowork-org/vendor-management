@@ -131,9 +131,9 @@ export class VendorManagementDataverseRepository implements CostDbRepository {
 
     const prices: PriceRecord[] = priceRows.flatMap((row) => {
       const materialVendor = materialVendorsById.get(lookup(row, "cdb_materialvendorid"));
-      const materialId = lookup(row, "cdb_materialid") || (materialVendor ? lookup(materialVendor, "cdb_material", "cdb_materialid") : "");
-      const vendorId = lookup(row, "cdb_vendorid") || (materialVendor ? lookup(materialVendor, "cdb_vendor", "cdb_vendorid") : "");
-      const unitId = lookup(row, "cdb_unitid") || (materialVendor ? lookup(materialVendor, "cdb_orderunit") : "");
+      const materialId = lookup(row, "cdb_materialid") || (materialVendor ? lookup(materialVendor, "cdb_materialid") : "");
+      const vendorId = lookup(row, "cdb_vendorid") || (materialVendor ? lookup(materialVendor, "cdb_vendorid") : "");
+      const unitId = lookup(row, "cdb_unitid") || (materialVendor ? lookup(materialVendor, "cdb_orderunitid") : "");
       const amount = number(row, "cdb_price");
       if (!materialId || !vendorId || amount === null) return [];
       return [{
@@ -204,8 +204,8 @@ export class VendorManagementDataverseRepository implements CostDbRepository {
     const items: CostItem[] = sortedMaterials.map((row, index) => {
       const no = index + 1;
       const materialId = id(row, "cdb_materialid");
-      const categoryId = lookup(row, "cdb_category", "cdb_materialcategoryid");
-      const unitId = lookup(row, "cdb_defaultunit", "cdb_unitid");
+      const categoryId = lookup(row, "cdb_materialcategoryid");
+      const unitId = lookup(row, "cdb_unitid");
       unitIdByNo.set(no, unitId);
 
       const itemPrices = prices.filter(

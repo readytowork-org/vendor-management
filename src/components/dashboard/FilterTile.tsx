@@ -1,4 +1,4 @@
-// Tile 1: year, vendor and material-name search with chips.
+// Tile 1: year, city and material-name search with chips.
 
 import {
   useEffect,
@@ -19,14 +19,14 @@ import type { CostDbMasters, CostItem, LocationKey, YearKey } from "../../domain
 const MAX_SUGGESTIONS = 40;
 
 interface Suggestion {
-  kind: "Middle item" | "Small item";
+  kind: "City" | "Middle item" | "Small item";
   /** Text shown in the row. */
   text: string;
   /** Metadata shown on the right. */
   meta: string;
   /** Keyword applied when a middle category is picked. */
   value: string;
-  /** Item number, or null for a middle category. */
+  /** Item number, or null for a middle category / city. */
   no: number | null;
 }
 
@@ -72,11 +72,29 @@ function highlight(text: string, query: string): ReactNode {
   return parts;
 }
 
-function buildSuggestions(items: CostItem[], query: string): Suggestion[] {
+function buildSuggestions(
+  items: CostItem[],
+  masters: CostDbMasters,
+  query: string,
+): Suggestion[] {
   const t = query.trim();
   if (!t) return [];
   const lower = t.toLowerCase();
   const out: Suggestion[] = [];
+
+  // City / location matches.
+  for (const loc of masters.locations) {
+    if (!loc.label.toLowerCase().includes(lower) && !loc.pref.toLowerCase().includes(lower)) {
+      continue;
+    }
+    out.push({
+      kind: "City",
+      text: loc.label,
+      meta: loc.pref,
+      value: loc.key,
+      no: null,
+    });
+  }
 
   // Middle categories, i.e. groups.
   const seen = new Set<string>();
@@ -134,8 +152,8 @@ export function FilterTile({
   }
 
   const suggestions = useMemo(
-    () => (open ? buildSuggestions(items, draft) : []),
-    [open, items, draft],
+    () => (open ? buildSuggestions(items, masters, draft) : []),
+    [open, items, masters, draft],
   );
 
   // Keep the active suggestion within the scroll view.
@@ -163,7 +181,12 @@ export function FilterTile({
     const s = suggestions[index];
     if (!s) return;
     closeSuggest();
-    if (s.no !== null) {
+    if (s.kind === "City") {
+      // Update the location filter to the picked city.
+      onLocationChange(s.value);
+      setDraft("");
+      onApplyKeyword("", null);
+    } else if (s.no !== null) {
       // Filter to this item and point the charts at it.
       setDraft(s.text);
       onApplyKeyword(s.text, s.no);
@@ -242,7 +265,7 @@ export function FilterTile({
 
         <div className="field">
           <label className="field-label" htmlFor="selLocation">
-            Vendor
+            City
           </label>
           <div className="select-wrap">
             <select
@@ -251,7 +274,7 @@ export function FilterTile({
               value={location}
               onChange={(e) => onLocationChange(e.target.value)}
             >
-              <optgroup label="Registered vendors">
+              <optgroup label="Registered cities">
                 {masters.locations.map((l) => (
                   <option key={l.key} value={l.key}>
                     {`${l.label} (${l.pref})`}
@@ -272,7 +295,7 @@ export function FilterTile({
 
         <div className="field field-grow">
           <label className="field-label" htmlFor="txtKeyword">
-            Item name (middle/small)
+            Item name (middle/small) or city
           </label>
           <div className="suggest-wrap" ref={wrapRef}>
             <Icon name="ic-search" className="input-ic" />
@@ -281,7 +304,7 @@ export function FilterTile({
               id="txtKeyword"
               type="text"
               autoComplete="off"
-              placeholder="Example: rebar, mechanical joint, anchor plate…"
+              placeholder="Example: rebar, mechanical joint, anchor plate, Tokyo…"
               role="combobox"
               aria-expanded={open}
               aria-autocomplete="list"
@@ -296,7 +319,7 @@ export function FilterTile({
             />
             <div className="suggest" id="suggestList" role="listbox" hidden={!open} ref={listRef}>
               {open && suggestions.length === 0 && (
-                <div className="suggest-empty">No matching items found</div>
+                <div className="suggest-empty">No matching items or cities found</div>
               )}
               {suggestions.map((s, i) => (
                 <div
@@ -341,7 +364,7 @@ export function FilterTile({
           Fiscal year <b>{pricing.yearDef(year).label}</b>
         </span>
         <span className={"chip" + (loc ? "" : " chip-warn")}>
-          Vendor <b>{locationLabel}</b>
+          City <b>{locationLabel}</b>
           {loc ? "" : " (no unit price data)"}
         </span>
         <span className="chip">

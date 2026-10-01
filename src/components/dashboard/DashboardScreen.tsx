@@ -65,6 +65,11 @@ export function DashboardScreen({
     return filteredItems.some((it) => it.no === selectedNo) ? selectedNo : filteredItems[0].no;
   }, [filteredItems, selectedNo]);
 
+  // When a row is selected from the grid, update the selected item.
+  const handleSelect = (no: number) => {
+    setSelectedNo(no);
+  };
+
   const selectedItem = useMemo(
     () => filteredItems.find((it) => it.no === effectiveSelectedNo) ?? null,
     [filteredItems, effectiveSelectedNo],
@@ -215,7 +220,7 @@ export function DashboardScreen({
             setPage(0);
           }}
           onSort={handleSort}
-          onSelect={setSelectedNo}
+          onSelect={handleSelect}
           onPageChange={setPage}
           onRefresh={onRefresh}
           onFocusFilter={focusFilter}

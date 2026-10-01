@@ -65,6 +65,15 @@ export function TrendTile({
     [masters.trendYears, priceHistory],
   );
 
+  /** Years that are estimated (not from history table). */
+  const estimatedYears = useMemo(
+    () =>
+      masters.trendYears.filter(
+        (k) => !priceHistory?.prices?.[k] !== undefined,
+      ),
+    [masters.trendYears, priceHistory],
+  );
+
   /** Base year versus the year before it, as a percentage. */
   const deltaRate = useMemo(() => {
     if (!item || !loc) return null;
@@ -164,21 +173,21 @@ export function TrendTile({
       <div className="tile-sub">
         {item && (
           <>
-            No.{item.no}
-            {" "}
-            <b>{itemLabel(item)}</b> ({item.unit})
-            {loc && (
-              <>
-                / Vendor: <b>{loc.label}</b>
-              </>
-            )}
+            No.{item.no}{" "}
+            <b>{itemLabel(item)}</b> ({item.unit}){" "}
+            / Prefecture: <b>{loc.label}</b>{" "}
+            <span style={{ color: COLOR.blue }}>━ actual</span>{" "}
+            <span style={{ color: COLOR.orange }}>━ average</span>
             {deltaRate !== null && (
               <span className={"delta " + (deltaRate > 0 ? "up" : deltaRate < 0 ? "down" : "")}>
-                YoY {deltaRate > 0 ? "+" : ""}
-                {deltaRate.toFixed(2)}%
+                YoY {deltaRate > 0 ? "+" : ""}{deltaRate.toFixed(2)}%
               </span>
             )}
-            {show && !isRecorded && " (includes estimated values based on revision rates)"}
+            {show && !isRecorded && (
+              <span className="estimated-tag">
+                {estimatedYears.length} year(s) estimated
+              </span>
+            )}
           </>
         )}
       </div>

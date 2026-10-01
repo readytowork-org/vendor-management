@@ -79,6 +79,7 @@ export function ItemGridTile({
     { key: "note", label: "Notes", className: "col-note" },
     { key: "unit", label: "Unit", className: "col-unit" },
     ...masters.locations.map((l) => ({ key: l.key, label: l.label, className: "col-num" })),
+    { key: "costnavi", label: "Average", className: "col-num" },
   ];
 
   return (
@@ -164,6 +165,7 @@ export function ItemGridTile({
                     {fmtNum(pricing.priceOf(it, l.key, year))}
                   </td>
                 ))}
+                <td className="num col-costnavi">{fmtNum(pricing.costnaviOf(it, year))}</td>
               </tr>
             ))}
           </tbody>

@@ -54,7 +54,7 @@ export function LocationBarTile({
   const config = useMemo<ChartConfiguration | null>(() => {
     if (!item) return null;
 
-    const labels = ["Vendor average", ...masters.locations.map((l) => l.label)];
+    const labels = ["Overall average", ...masters.locations.map((l) => l.label)];
     const values = [
       pricing.costnaviOf(item, year),
       ...masters.locations.map((l) => pricing.priceOf(item, l.key, year)),
